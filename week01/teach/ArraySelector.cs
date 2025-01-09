@@ -11,6 +11,25 @@ public static class ArraySelector
 
     private static int[] ListSelector(int[] list1, int[] list2, int[] select)
     {
-        return [];
+        //i create a new list to store the combined result.
+        List<int> result = new List<int>();
+        //then i create a counter that will keep track of list 1 nd 2
+        int index1 = 0, index2 = 0;
+
+        //a loop to iterate through the selector array while picking numbers from one list to another.
+        foreach (int s in select)
+        {
+            if (s == 1)
+            {
+                result.Add(list1[index1]);
+                index1++;
+            }
+            else if (s == 2)
+            {
+                result.Add(list2[index2]);
+                index2++;
+            }
+        }
+        return result.ToArray();
     }
 }
