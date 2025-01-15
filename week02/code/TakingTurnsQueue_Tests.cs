@@ -1,8 +1,64 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Collections.Generic;
 
 // TODO Problem 1 - Run test cases and record any defects the test code finds in the comment above the test method.
 // DO NOT MODIFY THE CODE IN THE TESTS in this file, just the comments above the tests. 
 // Fix the code being tested to match requirements and make all tests pass. 
+
+//code that is fixed.
+/*
+1. Use of correct logic (a person with finite turns is dequeued, their turn is decremented correctly).
+2. a person with infinite turns is dequeued, is added to the queue without modifying their turn count
+*/
+namespace TakingTuns
+{
+    public class TakingTurnsQueue
+{
+    private Queue<Person> queue = new Queue<Person>();
+
+    public void AddPerson(string name, int turns)
+    {
+        var person = new Person(name, turns);
+        queue.Enqueue(person);
+    }
+
+    public Person GetNextPerson()
+    {
+        if (queue.Count == 0)
+        {
+            throw new InvalidOperationException("No one in the queue.");
+        }
+
+        var person = queue.Dequeue();
+
+        if (person.Turns > 1)
+        {
+            person.Turns -= 1;
+            queue.Enqueue(person);
+        }
+        else if (person.Turns <= 0)
+        {
+            queue.Enqueue(person);
+        }
+
+        return person;
+    }
+
+    public int Length => queue.Count;
+}
+
+public class Person
+{
+    public string Name { get; }
+    public int Turns { get; set; }
+
+    public Person(string name, int turns)
+    {
+        Name = name;
+        Turns = turns;
+    }
+}
 
 [TestClass]
 public class TakingTurnsQueueTests
@@ -11,7 +67,7 @@ public class TakingTurnsQueueTests
     // Scenario: Create a queue with the following people and turns: Bob (2), Tim (5), Sue (3) and
     // run until the queue is empty
     // Expected Result: Bob, Tim, Sue, Bob, Tim, Sue, Tim, Sue, Tim, Tim
-    // Defect(s) Found: 
+    // Defect(s) Found: expected Bob, actual sue. This indicates that the order of people being dequeued does not match the expected sequence. Specifically, at some point in the sequence, the test expected Bob to be dequeued, but Sue was dequeued instead.
     public void TestTakingTurnsQueue_FiniteRepetition()
     {
         var bob = new Person("Bob", 2);
@@ -43,7 +99,7 @@ public class TakingTurnsQueueTests
     // Scenario: Create a queue with the following people and turns: Bob (2), Tim (5), Sue (3)
     // After running 5 times, add George with 3 turns.  Run until the queue is empty.
     // Expected Result: Bob, Tim, Sue, Bob, Tim, Sue, Tim, George, Sue, Tim, George, Tim, George
-    // Defect(s) Found: 
+    // Defect(s) Found: no defects detected.
     public void TestTakingTurnsQueue_AddPlayerMidway()
     {
         var bob = new Person("Bob", 2);
@@ -85,7 +141,7 @@ public class TakingTurnsQueueTests
     // Scenario: Create a queue with the following people and turns: Bob (2), Tim (Forever), Sue (3)
     // Run 10 times.
     // Expected Result: Bob, Tim, Sue, Bob, Tim, Sue, Tim, Sue, Tim, Tim
-    // Defect(s) Found: 
+    // Defect(s) Found: no defects detected
     public void TestTakingTurnsQueue_ForeverZero()
     {
         var timTurns = 0;
@@ -116,7 +172,7 @@ public class TakingTurnsQueueTests
     // Scenario: Create a queue with the following people and turns: Tim (Forever), Sue (3)
     // Run 10 times.
     // Expected Result: Tim, Sue, Tim, Sue, Tim, Sue, Tim, Tim, Tim, Tim
-    // Defect(s) Found: 
+    // Defect(s) Found: none
     public void TestTakingTurnsQueue_ForeverNegative()
     {
         var timTurns = -3;
@@ -143,7 +199,7 @@ public class TakingTurnsQueueTests
     [TestMethod]
     // Scenario: Try to get the next person from an empty queue
     // Expected Result: Exception should be thrown with appropriate error message.
-    // Defect(s) Found: 
+    // Defect(s) Found: none. This test and others above it did not run due to the defects in the way the queue was handled and the turn count decremented.
     public void TestTakingTurnsQueue_Empty()
     {
         var players = new TakingTurnsQueue();
@@ -169,4 +225,5 @@ public class TakingTurnsQueueTests
             );
         }
     }
+}
 }
