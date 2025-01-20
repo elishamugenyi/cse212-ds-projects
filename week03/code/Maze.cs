@@ -1,3 +1,6 @@
+using System.Diagnostics.CodeAnalysis;
+
+
 /// <summary>
 /// Defines a maze using a dictionary. The dictionary is provided by the
 /// user when the Maze object is created. The dictionary will contain the
@@ -23,6 +26,14 @@ public class Maze
     public Maze(Dictionary<ValueTuple<int, int>, bool[]> mazeMap)
     {
         _mazeMap = mazeMap;
+        _currX = 1;
+        _currY = 1; //assuming starting position is (1,1)
+
+        //set the initial position to a valid location within the maze
+        if (!_mazeMap.ContainsKey(ValueTuple.Create(_currX, _currY)))
+        {
+            throw new InvalidOperationException("Invalid starting position in the maze."); 
+        }
     }
 
     // TODO Problem 4 - ADD YOUR CODE HERE
@@ -33,6 +44,14 @@ public class Maze
     public void MoveLeft()
     {
         // FILL IN CODE
+        if (_mazeMap.TryGetValue(ValueTuple.Create(_currX, _currY), out var directions) && directions[0]) 
+        {
+            _currX--; 
+        }
+        else
+        {
+            throw new InvalidOperationException("Can't go that way!");
+        }
     }
 
     /// <summary>
@@ -42,6 +61,14 @@ public class Maze
     public void MoveRight()
     {
         // FILL IN CODE
+        if (_mazeMap.TryGetValue(ValueTuple.Create(_currX, _currY), out var directions) && directions[1]) 
+        {
+            _currX++; 
+        }
+        else
+        {
+            throw new InvalidOperationException("Can't go that way!");
+        }
     }
 
     /// <summary>
@@ -51,6 +78,14 @@ public class Maze
     public void MoveUp()
     {
         // FILL IN CODE
+        if (_mazeMap.TryGetValue(ValueTuple.Create(_currX, _currY), out var directions) && directions[2]) 
+        {
+            _currY++; 
+        }
+        else
+        {
+            throw new InvalidOperationException("Can't go that way!");
+        }
     }
 
     /// <summary>
@@ -60,6 +95,14 @@ public class Maze
     public void MoveDown()
     {
         // FILL IN CODE
+         if (_mazeMap.TryGetValue(ValueTuple.Create(_currX, _currY), out var directions) && directions[3])
+        {
+            _currY--;
+        }
+        else
+        {
+            throw new InvalidOperationException("Can't go that way!");
+        }
     }
 
     public string GetStatus()
