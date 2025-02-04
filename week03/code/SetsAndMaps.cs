@@ -118,49 +118,20 @@ public static class SetsAndMaps
         word1 = word1.ToLower().Replace(" ", "");
         word2 = word2.ToLower().Replace(" ","");
 
-        // 2. check for lenght mismatch
+        // 2. check for length mismatch
         if (word1.Length != word2.Length)
         {
-            return false; //anagrams must have the same length.
+            return false;
         }
 
-        // 3. Create a dictionary to count character frequencies in word1
-        Dictionary<char, int> charCounts1 = new Dictionary<char, int>();
-        foreach (char c in word1)
-        {
-            if (charCounts1.ContainsKey(c))
-            {
-                charCounts1[c]++;
-            }
-            else
-            {
-                charCounts1[c] = 1;
-            }
-        }
+        // 3. Convert strings to char arrays and sort them
+        char[] arr1 = word1.ToCharArray();
+        char[] arr2 = word2.ToCharArray();
+        Array.Sort(arr1);
+        Array.Sort(arr2);
 
-        // 4. Check if word2 has the same character frequencies
-        foreach (char c in word2)
-        {
-            if (!charCounts1.ContainsKey(c)) 
-            {
-                return false; // Character not found in word1
-            }
-            charCounts1[c]--; 
-            if (charCounts1[c] < 0) 
-            {
-                return false; // More occurrences of the character in word2 than in word1
-            }
-        }
-
-        // 5. Check character frequency counts
-        foreach (var kvp in charCounts1)
-        {
-            if (kvp.Value != 0)
-            {
-                return false;
-            }
-        }
-        return true; 
+        // 4. Compare the sorted char arrays
+        return new string(arr1) == new string(arr2);
     }
 
     /// <summary>

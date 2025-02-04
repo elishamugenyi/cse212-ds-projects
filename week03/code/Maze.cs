@@ -80,7 +80,7 @@ public class Maze
         // FILL IN CODE
         if (_mazeMap.TryGetValue(ValueTuple.Create(_currX, _currY), out var directions) && directions[2]) 
         {
-            _currY++; 
+            _currY--;
         }
         else
         {
@@ -97,7 +97,7 @@ public class Maze
         // FILL IN CODE
          if (_mazeMap.TryGetValue(ValueTuple.Create(_currX, _currY), out var directions) && directions[3])
         {
-            _currY--;
+            _currY++;
         }
         else
         {
