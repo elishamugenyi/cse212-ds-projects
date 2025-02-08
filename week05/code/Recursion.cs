@@ -109,15 +109,16 @@ public static class Recursion
         //initialize the dictionary if its null
         if (remember == null)
             remember = new Dictionary<int, decimal>();
-        // Base Cases
-        if (s == 0)
-            return 0;
-        if (s == 1)
-            return 1;
-        if (s == 2)
-            return 2;
-        if (s == 3)
-            return 4;
+
+    // Base Cases
+    if (s < 0)
+        return 0;
+    if (s == 0)
+        return 1;
+    if (s == 1)
+        return 1;
+    if (s == 2)
+        return 2;
 
         // TODO Start Problem 3
         //check for result if its already compputed
@@ -125,7 +126,9 @@ public static class Recursion
             return remember[s];
 
         // Solve using recursion
-        decimal ways = CountWaysToClimb(s - 1) + CountWaysToClimb(s - 2) + CountWaysToClimb(s - 3);
+        decimal ways = CountWaysToClimb(s - 1, remember) + 
+                       CountWaysToClimb(s - 2, remember) + 
+                       CountWaysToClimb(s - 3, remember);
         //store computed result in dictionary
         remember[s] = ways;
         return ways;
@@ -173,33 +176,61 @@ public static class Recursion
         if (currPath == null) {
             currPath = new List<ValueTuple<int, int>>();
         }
-        // Base Cases: Out of bounds or hit a wall
-        if (x < 0 || y < 0 || x >= maze.Width || y >= maze.Height || maze.IsEnd(x, y)|| currPath.Contains((x, y)))
-        {
-            return;
-        }
-        
         currPath.Add((x,y)); // Use this syntax to add to the current path
 
         // TODO Start Problem 5
         // ADD CODE HERE
+
+        // Check if we have reached the end of the maze
+        if (maze.IsEnd(x, y)) {
+            results.Add(PathToString(currPath)); // Convert path to string and add to results
+            currPath.RemoveAt(currPath.Count - 1); // Remove the current position before returning
+            return;
+        }
+
+        // Explore the possible moves (up, down, left, right)
+        foreach (var move in GetPossibleMoves(maze, currPath, x, y)) {
+            SolveMaze(results, maze, move.Item1, move.Item2, currPath);
+        }
+
+        // Remove the current position from the path before backtracking
+        currPath.RemoveAt(currPath.Count - 1);
         // Check if we reached the goal
-        if (x == maze.Width - 1 && y == maze.Height - 1)
+        /*if (x == maze.Width - 1 && y == maze.Height - 1)
         {
             results.Add(string.Join(" -> ", currPath.Select(pos => $"({pos.Item1},{pos.Item2})")));
             currPath.RemoveAt(currPath.Count - 1); // Backtrack
             return;
-        }
+        }*/
 
         // Recursive moves (Right, Left, Down, Up)
-        SolveMaze(results, maze, x + 1, y, new List<ValueTuple<int, int>>(currPath)); // Right
-        SolveMaze(results, maze, x - 1, y, new List<ValueTuple<int, int>>(currPath)); // Left
-        SolveMaze(results, maze, x, y + 1, new List<ValueTuple<int, int>>(currPath)); // Down
-        SolveMaze(results, maze, x, y - 1, new List<ValueTuple<int, int>>(currPath)); // Up
+        //SolveMaze(results, maze, x + 1, y, new List<ValueTuple<int, int>>(currPath)); // Right
+        //SolveMaze(results, maze, x - 1, y, new List<ValueTuple<int, int>>(currPath)); // Left
+        //SolveMaze(results, maze, x, y + 1, new List<ValueTuple<int, int>>(currPath)); // Down
+        //SolveMaze(results, maze, x, y - 1, new List<ValueTuple<int, int>>(currPath)); // Up
 
         // Backtrack
-        currPath.RemoveAt(currPath.Count - 1);
+        //currPath.RemoveAt(currPath.Count - 1);
 
         // results.Add(currPath.AsString()); // Use this to add your path to the results array keeping track of complete maze solutions when you find the solution.
+    }
+
+    // Helper method to check for possible moves
+    private static List<(int, int)> GetPossibleMoves(Maze maze, List<ValueTuple<int, int>> currPath, int x, int y)
+    {
+        List<(int, int)> moves = new List<(int, int)>();
+
+        if (maze.IsValidMove(currPath, x + 1, y)) moves.Add((x + 1, y)); // Move down
+        if (maze.IsValidMove(currPath, x - 1, y)) moves.Add((x - 1, y)); // Move up
+        if (maze.IsValidMove(currPath, x, y + 1)) moves.Add((x, y + 1)); // Move right
+        if (maze.IsValidMove(currPath, x, y - 1)) moves.Add((x, y - 1)); // Move left
+
+        return moves;
+    }
+
+    // Helper method to convert the path to a string
+    private static string PathToString(List<(int, int)> path)
+    {
+        return $"<List>{{{string.Join(", ", path.Select(p => $"({p.Item1},{p.Item2})"))}}}";
     }
 }
